@@ -24,6 +24,7 @@
             android:layout_gravity="center_horizontal|top" />
 
             <Button
+            android:id="@+id/start"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_gravity="center"

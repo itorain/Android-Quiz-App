@@ -5,7 +5,7 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:fitsSystemWindows="true"
-    tools:context="com.quizapp.zay.quizapp.QuizActivity">
+    tools:context="com.quizapp.zay.quizapp.ResultActivity">
 
     <android.support.design.widget.AppBarLayout
         android:layout_width="match_parent"
@@ -21,30 +21,31 @@
 
     </android.support.design.widget.AppBarLayout>
 
-    <include layout="@layout/content_quiz" />
+    <include layout="@layout/content_result" />
 
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/answer"
+    <LinearLayout
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:layout_gravity="bottom"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/btn_star" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/next"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|right"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_media_next" />
-
-    <android.support.design.widget.FloatingActionButton
-        android:id="@+id/back"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_gravity="bottom|left"
-        android:layout_margin="@dimen/fab_margin"
-        android:src="@android:drawable/ic_media_previous" />
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentRight="true"
+        android:layout_alignParentTop="true"
+        android:orientation="vertical" >
+        <RatingBar
+            android:id="@+id/ratingBar1"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:numStars="10"
+            android:stepSize="1"/>
+        <TextView
+            android:id="@+id/textResult"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.08"
+            android:text="Large Text"
+            android:textAppearance="?android:attr/textAppearanceLarge" />
+    </LinearLayout>
 
 </android.support.design.widget.CoordinatorLayout>
+
+
