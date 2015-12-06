@@ -19,33 +19,36 @@ public class ResultActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_result);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
-        setSupportActionBar(toolbar);
 
-        //get rating bar object
-        RatingBar bar = (RatingBar)findViewById(R.id.ratingBar1);
         //get text view
-        TextView t = (TextView)findViewById(R.id.textResult);
+        TextView numberRight = (TextView)findViewById(R.id.textView1);
+        TextView totalNumOfQuestions = (TextView)findViewById(R.id.textView2);
+        TextView message = (TextView)findViewById(R.id.textView3);
+        RatingBar bar=(RatingBar)findViewById(R.id.ratingBar1);
         //get score
         Bundle b = getIntent().getExtras();
         int score= b.getInt("score");
         //display score
+        numberRight.setText(Integer.toString(score) + "/10");
+        totalNumOfQuestions.setText("10 questions");
         bar.setRating(score);
         switch (score)
         {
+            case 0:
             case 1:
-            case 2: t.setText("Why'd you even try?");
+            case 2: message.setText("Why'd you even try?");
                 break;
             case 3:
-            case 4:t.setText("You Suck!");
+            case 4:message.setText("You Suck!");
                 break;
             case 5:
-            case 6:t.setText("Still only a D.");
+            case 6:message.setText("Still only a D.");
                 break;
             case 7:
-            case 8:t.setText("Ok I see you.");
+            case 8:message.setText("Ok I see you.");
                 break;
             case 9:
-            case 10:t.setText("This is where bosses are at!");
+            case 10:message.setText("This is where bosses are at!");
         }
     }
 

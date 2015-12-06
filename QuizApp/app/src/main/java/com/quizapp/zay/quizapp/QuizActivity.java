@@ -1,5 +1,6 @@
 package com.quizapp.zay.quizapp;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.support.design.widget.FloatingActionButton;
@@ -12,6 +13,8 @@ import android.widget.Button;
 import android.widget.RadioButton;
 import android.widget.RadioGroup;
 import android.widget.TextView;
+import android.widget.Toast;
+
 import java.util.ArrayList;
 import java.util.Random;
 
@@ -25,8 +28,8 @@ public class QuizActivity extends AppCompatActivity {
     TextView textQuestion;
     RadioButton rda, rdb, rdc, rdanswer;
     FloatingActionButton next;
-    FloatingActionButton answer; // Currently unimplemented
-    FloatingActionButton prev; // Currently unimplemented
+    FloatingActionButton answer;
+    FloatingActionButton prev;
     Button finish;
 
 // ******** Instance variables *************
@@ -38,10 +41,10 @@ public class QuizActivity extends AppCompatActivity {
         setContentView(R.layout.activity_quiz);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
         setSupportActionBar(toolbar);
-        //getSupportActionBar().setDisplayHomeAsUpEnabled(true);
 
         DBHelper database = new DBHelper(this);
-        questionList = database.getAllQuestions();
+        questionList = new ArrayList<>();
+        createList(database);
         currentQ = questionList.get(qid);
         textQuestion = (TextView)findViewById(R.id.textView1);
         rda =(RadioButton)findViewById(R.id.radio0);
@@ -52,29 +55,18 @@ public class QuizActivity extends AppCompatActivity {
         answer = (FloatingActionButton)findViewById(R.id.answer);
         prev = (FloatingActionButton)findViewById(R.id.back);
         finish = (Button)findViewById(R.id.finish);
-        //Random randomGenerator = new Random();
         setQuestionView();
 
         next.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                RadioGroup grp = (RadioGroup) findViewById(R.id.radioGroup1);
-                RadioButton enteredAnswer = (RadioButton) findViewById(grp.getCheckedRadioButtonId());
-                //Log.d("yourans", currentQ.getANSWER() + " " + answer.getText());
-                if (currentQ.getAnswer().equals(enteredAnswer.getText())) {
-                    score++;
-                    Log.d("score", "Your score" + score);
-                }
                 if (qid < 10) {
                     currentQ = questionList.get(qid);
                     setQuestionView();
-                } else {
-                    Intent intent = new Intent(QuizActivity.this, ResultActivity.class);
-                    Bundle b = new Bundle();
-                    b.putInt("score", score); //Your score
-                    intent.putExtras(b); //Put your score to your next Intent
-                    startActivity(intent);
-                    finish();
+                    qid++;
+                }
+                else {
+                    showResults();
                 }
             }
         });
@@ -82,28 +74,103 @@ public class QuizActivity extends AppCompatActivity {
         finish.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Intent intent = new Intent(QuizActivity.this, ResultActivity.class);
-                Bundle b = new Bundle();
-                b.putInt("score", score); //Your score
-                intent.putExtras(b); //Put your score to your next Intent
-                startActivity(intent);
-                finish();
+                showResults();
             }
         });
+
+        answer.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                RadioGroup grp = (RadioGroup) findViewById(R.id.radioGroup1);
+                RadioButton enteredAnswer = (RadioButton) findViewById(grp.getCheckedRadioButtonId());
+                if (currentQ.getAnswer().equals(enteredAnswer.getText())) {
+                    score++;
+                    Log.d("score", "Your score" + score);
+                    showToast("Correct!");
+                    if (qid == 9) {
+                        showResults();
+                    }
+                    else {
+                        currentQ = questionList.get(qid++);
+                        setQuestionView();
+                    }
+
+                }
+                else if (qid < 9) {
+                    showToast("Incorrect!");
+                    currentQ = questionList.get(qid++);
+                    setQuestionView();
+                }
+                else {
+                    showResults();
+                }
+            }
+        });
+
+        prev.setOnClickListener(new View.OnClickListener() {
+            public void onClick(View v) {
+                if (qid != 0) {
+                    currentQ = questionList.get(qid--);
+                    setQuestionView();
+                }
+                else {
+                    showToast("No previous Quiz Question!");
+                }
+            }
+        });
+
     }
+
 // **************************** On create Method *******************************
 
 // ********* Set up new question view method ******************
 
-    private void setQuestionView()
-    {
+    private void setQuestionView() {
         textQuestion.setText(currentQ.getQuestion());
-        rda.setText(currentQ.getOptA());
+        rda.setText(currentQ.getOptA());// Figure out a way to randomize these
         rdb.setText(currentQ.getOptB());
         rdc.setText(currentQ.getOptC());
-        qid++;
+        rdanswer.setText(currentQ.getAnswer());
     }
 
 // ********* Set up new question view method *******************
 
+// ************ Create a list of 10 random questions *************
+
+    private void createList(DBHelper database) {
+        ArrayList<Question> allQuestions = database.getAllQuestions();
+        Random randomGenerator = new Random();
+        int index;
+        for (int i = 0; i < 10; i++) {
+            index = randomGenerator.nextInt(allQuestions.size());
+            Question quest = allQuestions.get(index);
+            questionList.add(quest);
+            allQuestions.remove(quest);
+        }
+    }
+
+// ************ Create a list of 10 random questions *************
+
+//************* Show pop up message for entered answer ***********
+
+    private void showToast(String message) {
+        Context context = getApplicationContext();
+        CharSequence text = message;
+        int duration = Toast.LENGTH_SHORT;
+        Toast toast = Toast.makeText(context, text, duration);
+        toast.show();
+    }
+
+//************* Show pop up message for entered answer ***********
+
+//**************** Move to Results *************************
+    private void showResults() {
+        Intent intent = new Intent(QuizActivity.this, ResultActivity.class);
+        Bundle b = new Bundle();
+        b.putInt("score", score); //Your score
+        intent.putExtras(b); //Put your score to your next Intent
+        startActivity(intent);
+        finish();
+    }
+//**************** Move to Results *************************
 }
