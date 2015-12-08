@@ -24,6 +24,7 @@ public class QuizActivity extends AppCompatActivity {
     ArrayList<Question> questionList;
     int score = 0;
     int qid = 0;
+    int attempted = 0;
     Question currentQ;
     TextView textQuestion;
     RadioButton rda, rdb, rdc, rdanswer;
@@ -83,9 +84,16 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 RadioGroup grp = (RadioGroup) findViewById(R.id.radioGroup1);
                 RadioButton enteredAnswer = (RadioButton) findViewById(grp.getCheckedRadioButtonId());
+                if (enteredAnswer == null) {
+                    showToast("No answer selected!");
+                    return;
+                }
+                if (attempted <= 10) {
+                    attempted++;
+                }
                 if (currentQ.getAnswer().equals(enteredAnswer.getText())) {
                     score++;
-                    Log.d("score", "Your score" + score);
+                    Log.d("score", "Your score " + score);
                     showToast("Correct!");
                     if (qid == 9) {
                         showResults();

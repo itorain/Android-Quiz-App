@@ -30,7 +30,7 @@ public class Question {
         int id = 0;
     }
 
-    public Question(String optA, String optB, String optC, String answer, String question) {
+    public Question(String answer,String optA, String optB, String optC, String question) {
         this.optA = optA;
         this.optB = optB;
         this.optC = optC;
@@ -88,7 +88,7 @@ public class Question {
     }
 
     public void setID(int ID) {
-        this.id = id;
+        this.id = ID;
     }
 
 // ******** Getters and Setters ***************************
