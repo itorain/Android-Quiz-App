@@ -27,10 +27,14 @@ public class ResultActivity extends AppCompatActivity {
         RatingBar bar=(RatingBar)findViewById(R.id.ratingBar1);
         //get score
         Bundle b = getIntent().getExtras();
-        int score= b.getInt("score");
+        int score = b.getInt("score");
+        int attempted = b.getInt("attempted");
         //display score
-        numberRight.setText(Integer.toString(score) + "/10");
-        totalNumOfQuestions.setText("10 questions");
+        if (score > 10) {
+            score = 10;
+        }
+        numberRight.setText("Number correct: " + Integer.toString(score));
+        totalNumOfQuestions.setText("10 questions total. Attempted: " + Integer.toString(attempted));
         bar.setRating(score);
         switch (score)
         {

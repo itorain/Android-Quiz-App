@@ -37,7 +37,7 @@ public class QuizActivity extends AppCompatActivity {
 
 // ******************** On create Method *******************************
     @Override
-    protected void onCreate(Bundle savedInstanceState) {
+    protected void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_quiz);
         Toolbar toolbar = (Toolbar) findViewById(R.id.toolbar);
@@ -84,32 +84,34 @@ public class QuizActivity extends AppCompatActivity {
             public void onClick(View v) {
                 RadioGroup grp = (RadioGroup) findViewById(R.id.radioGroup1);
                 RadioButton enteredAnswer = (RadioButton) findViewById(grp.getCheckedRadioButtonId());
+                Log.d("text", "Answered! " + attempted);
                 if (enteredAnswer == null) {
                     showToast("No answer selected!");
                     return;
                 }
-                if (attempted <= 10) {
-                    attempted++;
-                }
-                if (currentQ.getAnswer().equals(enteredAnswer.getText())) {
+                else if (currentQ.getAnswer().equals(enteredAnswer.getText())) {
                     score++;
+                    attempted++;
                     Log.d("score", "Your score " + score);
                     showToast("Correct!");
                     if (qid == 9) {
                         showResults();
                     }
                     else {
-                        currentQ = questionList.get(qid++);
+                        currentQ = questionList.get(++qid);
                         setQuestionView();
                     }
 
                 }
                 else if (qid < 9) {
+                    attempted++;
                     showToast("Incorrect!");
-                    currentQ = questionList.get(qid++);
+                    currentQ = questionList.get(++qid);
                     setQuestionView();
                 }
                 else {
+                    attempted++;
+                    showToast("Incorrect!");
                     showResults();
                 }
             }
@@ -118,7 +120,7 @@ public class QuizActivity extends AppCompatActivity {
         prev.setOnClickListener(new View.OnClickListener() {
             public void onClick(View v) {
                 if (qid != 0) {
-                    currentQ = questionList.get(qid--);
+                    currentQ = questionList.get(--qid);
                     setQuestionView();
                 }
                 else {
@@ -134,11 +136,28 @@ public class QuizActivity extends AppCompatActivity {
 // ********* Set up new question view method ******************
 
     private void setQuestionView() {
+        ArrayList<String> ans = new ArrayList<String>(4);
+        int random;
+        Random randomGenerator = new Random();
+        ans.add(currentQ.getOptA());
+        ans.add(currentQ.getOptB());
+        ans.add(currentQ.getOptC());
+        ans.add(currentQ.getAnswer());
         textQuestion.setText(currentQ.getQuestion());
-        rda.setText(currentQ.getOptA());// Figure out a way to randomize these
-        rdb.setText(currentQ.getOptB());
-        rdc.setText(currentQ.getOptC());
-        rdanswer.setText(currentQ.getAnswer());
+
+        random = randomGenerator.nextInt(4);
+        rda.setText(ans.get(random));
+        ans.remove(random);
+
+        random = randomGenerator.nextInt(3);
+        rdb.setText(ans.get(random));
+        ans.remove(random);
+
+        random = randomGenerator.nextInt(2);
+        rdc.setText(ans.get(random));
+        ans.remove(random);
+
+        rdanswer.setText(ans.get(0));
     }
 
 // ********* Set up new question view method *******************
@@ -176,6 +195,7 @@ public class QuizActivity extends AppCompatActivity {
         Intent intent = new Intent(QuizActivity.this, ResultActivity.class);
         Bundle b = new Bundle();
         b.putInt("score", score); //Your score
+        b.putInt("attempted", attempted);
         intent.putExtras(b); //Put your score to your next Intent
         startActivity(intent);
         finish();
